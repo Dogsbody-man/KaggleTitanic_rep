@@ -1,0 +1,10 @@
+{
+    "cursor.terminal.enableAiChecks": false,
+    "editor.accessibilitySupport": "off",
+    "editor.experimentalWhitespaceRendering": "off",
+    "editor.guides.highlightActiveIndentation": false,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.inlineSuggest.edits.allowCodeShifting": "never",
+    "editor.inlineSuggest.edits.renderSideBySide": "never",
+    "editor.inlineSuggest.enabled": false
+}
