@@ -82,15 +82,18 @@ model2 = RandomForestClassifier(n_estimators=200, criterion='gini', max_depth=5,
 
 
 model3 = LogisticRegression()
-model3.fit(train_x, train_y)
-prediction3 = model3.predict(test_x)
+# model3.fit(train_x, train_y)
+# prediction3 = model3.predict(test_x)
 # score3 = accuracy_score(prediction3, test_y)
 # print(score3)
-submission = pd.DataFrame({
-    'PassengerId': test_original['PassengerId'],  # сохрани заранее!
-    'Survived': prediction3
-})
-submission.to_csv('submission.csv', index=False)
+
+# submission = pd.DataFrame({
+#     'PassengerId': test_original['PassengerId'],  # сохрани заранее!
+#     'Survived': prediction3
+# })
+# submission.to_csv('submission.csv', index=False)
+
+
 model4 = DecisionTreeClassifier()
 # model4.fit(train_X, train_Y)
 # prediction4 = model4.predict(test_X)
@@ -102,7 +105,32 @@ model5 = KNeighborsClassifier()
 # prediction5 = model5.predict(test_X)
 # score5 = accuracy_score(prediction5, test_Y)
 # print(score5)
-# cv_stratified = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)   
-# cv_score = cross_val_score(model3, train_x, train_y, cv=cv_stratified, scoring='accuracy')
-# print(cv_score.mean())
-# print(cv_score.std())
+
+cv_stratified = StratifiedKFold(n_splits=8, shuffle=True, random_state=42)  
+train_errors = []
+val_errors = []
+
+for n in range(10, 201, 10):  # от 10 до 200 деревьев с шагом 10
+    rf = RandomForestClassifier(n_estimators=n, random_state=42, n_jobs=-1)
+    
+    # Быстрая кросс-валидация
+    from sklearn.model_selection import cross_validate
+    scores = cross_validate(
+        rf, train_x, train_y,
+        cv=cv_stratified,
+        scoring='accuracy',
+        return_train_score=True,
+        n_jobs=-1
+    )
+    
+    train_errors.append(scores['train_score'].mean())
+    val_errors.append(scores['test_score'].mean())
+
+# Визуализация
+plt.plot(range(10, 201, 10), train_errors, 'o-', label='Train')
+plt.plot(range(10, 201, 10), val_errors, 's-', label='Validation')
+plt.xlabel('Number of Trees')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.grid(True)
+plt.show()
